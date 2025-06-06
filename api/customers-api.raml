@@ -1,0 +1,392 @@
+#%RAML 1.0
+title: Customers API
+description: This API manages customer information and profiles.
+version: 1.0.0
+baseUri: https://customers.kong-bank.com
+protocols: [HTTPS, HTTP]
+
+mediaType: application/json
+
+annotationTypes:
+  contact:
+    type: object
+    properties:
+      email: string
+
+(contact):
+  email: stephen.brown@konghq.com
+
+types:
+  Customer:
+    type: object
+    description: Represents a bank customer with their profile information
+    properties:
+      customer_id:
+        type: string
+        description: Unique identifier for the customer (UUID v4)
+        example: "cust-123e4567-e89b-12d3-a456-426614174000"
+      first_name:
+        type: string
+        description: Customer's first name
+        example: "John"
+      last_name:
+        type: string
+        description: Customer's last name
+        example: "Smith"
+      email:
+        type: string
+        description: Customer's email address
+        example: "john.smith@email.com"
+      phone:
+        type: string
+        description: Customer's phone number
+        example: "+1-555-123-4567"
+      date_of_birth:
+        type: date-only
+        description: Customer's date of birth
+        example: "1985-03-15"
+      status:
+        type: string
+        enum: [active, inactive, suspended]
+        description: Current status of the customer account
+        example: "active"
+      created_date:
+        type: datetime
+        description: When the customer account was created
+        example: "2024-01-15T10:30:00Z"
+    example:
+      customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+      first_name: "John"
+      last_name: "Smith"
+      email: "john.smith@email.com"
+      phone: "+1-555-123-4567"
+      date_of_birth: "1985-03-15"
+      status: "active"
+      created_date: "2024-01-15T10:30:00Z"
+
+  CreateCustomerRequest:
+    type: object
+    description: Request payload for creating a new customer
+    properties:
+      first_name:
+        type: string
+        description: Customer's first name
+        example: "Jane"
+      last_name:
+        type: string
+        description: Customer's last name
+        example: "Doe"
+      email:
+        type: string
+        description: Customer's email address
+        example: "jane.doe@email.com"
+      phone:
+        type: string
+        description: Customer's phone number
+        example: "+1-555-987-6543"
+      date_of_birth:
+        type: date-only
+        description: Customer's date of birth
+        example: "1990-07-22"
+    example:
+      first_name: "Jane"
+      last_name: "Doe"
+      email: "jane.doe@email.com"
+      phone: "+1-555-987-6543"
+      date_of_birth: "1990-07-22"
+
+  UpdateCustomerRequest:
+    type: object
+    description: Request payload for updating customer information
+    properties:
+      first_name:
+        type: string
+        description: Customer's first name
+        example: "Jane"
+        required: false
+      last_name:
+        type: string
+        description: Customer's last name
+        example: "Doe"
+        required: false
+      email:
+        type: string
+        description: Customer's email address
+        example: "jane.doe@newemail.com"
+        required: false
+      phone:
+        type: string
+        description: Customer's phone number
+        example: "+1-555-999-8888"
+        required: false
+    example:
+      email: "jane.doe@newemail.com"
+      phone: "+1-555-999-8888"
+
+  HealthResponse:
+    type: object
+    description: Response indicating the health status of the service
+    properties:
+      status:
+        type: string
+        description: The health status of this service
+        example: "UP"
+      message:
+        type: string
+        description: A human-readable message describing the health status
+        example: "Customers service operational"
+    example:
+      status: "UP"
+      message: "Customers service operational"
+
+  ErrorResponse:
+    type: object
+    description: Standard error response structure for all error cases
+    properties:
+      error_code:
+        type: string
+        description: A standardized error code identifying the type of error
+        enum: [INTERNAL_ERROR, NOT_FOUND, BAD_REQUEST, CONFLICT]
+        example: "NOT_FOUND"
+      message:
+        type: string
+        description: A human-readable description of the error
+        example: "Customer not found"
+    example:
+      error_code: "NOT_FOUND"
+      message: "Customer not found"
+
+/health:
+  displayName: Health Check
+  description: Health check endpoints for monitoring service status
+  get:
+    displayName: Check service health
+    description: Returns the health status of the customers service
+    responses:
+      200:
+        description: Service is healthy
+        body:
+          application/json:
+            type: HealthResponse
+            examples:
+              healthy:
+                status: "UP"
+                message: "Customers service operational"
+      503:
+        description: Service is unhealthy
+        body:
+          application/json:
+            type: HealthResponse
+            examples:
+              unhealthy:
+                status: "DOWN"
+                message: "Customers service unavailable"
+
+/customers:
+  displayName: Customers
+  description: Operations related to customer management
+  get:
+    displayName: List customers
+    description: Returns a paginated list of customers
+    queryParameters:
+      page:
+        type: integer
+        description: Page number for pagination
+        example: 1
+        default: 1
+        required: false
+      limit:
+        type: integer
+        description: Number of customers per page
+        example: 20
+        default: 20
+        required: false
+    responses:
+      200:
+        description: Successfully retrieved customers list
+        body:
+          application/json:
+            type: Customer[]
+            examples:
+              multiple_customers:
+                - customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                  first_name: "John"
+                  last_name: "Smith"
+                  email: "john.smith@email.com"
+                  phone: "+1-555-123-4567"
+                  date_of_birth: "1985-03-15"
+                  status: "active"
+                  created_date: "2024-01-15T10:30:00Z"
+                - customer_id: "cust-987fcdeb-51a2-43e7-89bc-765432198765"
+                  first_name: "Jane"
+                  last_name: "Doe"
+                  email: "jane.doe@email.com"
+                  phone: "+1-555-987-6543"
+                  date_of_birth: "1990-07-22"
+                  status: "active"
+                  created_date: "2024-01-16T14:15:00Z"
+      500:
+        description: Internal server error
+        body:
+          application/json:
+            type: ErrorResponse
+            examples:
+              internal_error:
+                error_code: "INTERNAL_ERROR"
+                message: "Failed to retrieve customers"
+  post:
+    displayName: Create customer
+    description: Creates a new customer profile
+    body:
+      application/json:
+        type: CreateCustomerRequest
+        description: Customer information for new profile
+        examples:
+          new_customer:
+            first_name: "Alice"
+            last_name: "Johnson"
+            email: "alice.johnson@email.com"
+            phone: "+1-555-111-2222"
+            date_of_birth: "1988-11-30"
+    responses:
+      201:
+        description: Customer created successfully
+        body:
+          application/json:
+            type: Customer
+            examples:
+              created_customer:
+                customer_id: "cust-456e7890-e12b-34d5-a678-901234567890"
+                first_name: "Alice"
+                last_name: "Johnson"
+                email: "alice.johnson@email.com"
+                phone: "+1-555-111-2222"
+                date_of_birth: "1988-11-30"
+                status: "active"
+                created_date: "2024-01-17T16:45:00Z"
+      400:
+        description: Invalid customer data
+        body:
+          application/json:
+            type: ErrorResponse
+            examples:
+              validation_error:
+                error_code: "BAD_REQUEST"
+                message: "Invalid email format"
+      409:
+        description: Customer already exists
+        body:
+          application/json:
+            type: ErrorResponse
+            examples:
+              duplicate_customer:
+                error_code: "CONFLICT"
+                message: "Customer with this email already exists"
+      500:
+        description: Internal server error
+        body:
+          application/json:
+            type: ErrorResponse
+            examples:
+              creation_error:
+                error_code: "INTERNAL_ERROR"
+                message: "Failed to create customer"
+
+  /{customerId}:
+    displayName: Customer by ID
+    uriParameters:
+      customerId:
+        type: string
+        description: The UUID of the customer
+        example: "cust-123e4567-e89b-12d3-a456-426614174000"
+    get:
+      displayName: Get customer details
+      description: Returns detailed information for a specific customer
+      responses:
+        200:
+          description: Customer details retrieved successfully
+          body:
+            application/json:
+              type: Customer
+              examples:
+                customer_details:
+                  customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                  first_name: "John"
+                  last_name: "Smith"
+                  email: "john.smith@email.com"
+                  phone: "+1-555-123-4567"
+                  date_of_birth: "1985-03-15"
+                  status: "active"
+                  created_date: "2024-01-15T10:30:00Z"
+        404:
+          description: Customer not found
+          body:
+            application/json:
+              type: ErrorResponse
+              examples:
+                not_found:
+                  error_code: "NOT_FOUND"
+                  message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not found"
+        500:
+          description: Internal server error
+          body:
+            application/json:
+              type: ErrorResponse
+              examples:
+                server_error:
+                  error_code: "INTERNAL_ERROR"
+                  message: "Failed to retrieve customer details"
+    put:
+      displayName: Update customer
+      description: Updates customer information
+      body:
+        application/json:
+          type: UpdateCustomerRequest
+          description: Updated customer information
+          examples:
+            update_contact:
+              email: "john.smith@newemail.com"
+              phone: "+1-555-999-7777"
+      responses:
+        200:
+          description: Customer updated successfully
+          body:
+            application/json:
+              type: Customer
+              examples:
+                updated_customer:
+                  customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                  first_name: "John"
+                  last_name: "Smith"
+                  email: "john.smith@newemail.com"
+                  phone: "+1-555-999-7777"
+                  date_of_birth: "1985-03-15"
+                  status: "active"
+                  created_date: "2024-01-15T10:30:00Z"
+        400:
+          description: Invalid update data
+          body:
+            application/json:
+              type: ErrorResponse
+              examples:
+                validation_error:
+                  error_code: "BAD_REQUEST"
+                  message: "Invalid phone number format"
+        404:
+          description: Customer not found
+          body:
+            application/json:
+              type: ErrorResponse
+              examples:
+                not_found:
+                  error_code: "NOT_FOUND"
+                  message: "Customer not found for update"
+        500:
+          description: Internal server error
+          body:
+            application/json:
+              type: ErrorResponse
+              examples:
+                update_error:
+                  error_code: "INTERNAL_ERROR"
+                  message: "Failed to update customer"
