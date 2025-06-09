@@ -1,0 +1,1299 @@
+---
+openapi: "3.0.0"
+info:
+  title: "Customers API"
+  description: "This API manages customer information and profiles."
+  version: "1.0.0"
+servers:
+- url: "https://customers.kong-bank.com"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+schemes:
+- "HTTPS"
+- "HTTP"
+paths:
+  /health:
+    x-amf-displayName: "Health Check"
+    description: "Health check endpoints for monitoring service status"
+    get:
+      operationId: "Check service health"
+      description: "Returns the health status of the customers service"
+      responses:
+        200:
+          description: "Service is healthy"
+          content:
+            application/json:
+              schema:
+                description: "Response indicating the health status of the service"
+                x-amf-examples:
+                  example_0:
+                    status: "UP"
+                    message: "Customers service operational"
+                  healthy:
+                    status: "UP"
+                    message: "Customers service operational"
+                  unhealthy:
+                    status: "DOWN"
+                    message: "Customers service unavailable"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "status"
+                - "message"
+                properties:
+                  status:
+                    description: "The health status of this service"
+                    example: "UP"
+                    type: "string"
+                  message:
+                    description: "A human-readable message describing the health status"
+                    example: "Customers service operational"
+                    type: "string"
+        503:
+          description: "Service is unhealthy"
+          content:
+            application/json:
+              schema:
+                description: "Response indicating the health status of the service"
+                x-amf-examples:
+                  example_0:
+                    status: "UP"
+                    message: "Customers service operational"
+                  healthy:
+                    status: "UP"
+                    message: "Customers service operational"
+                  unhealthy:
+                    status: "DOWN"
+                    message: "Customers service unavailable"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "status"
+                - "message"
+                properties:
+                  status:
+                    description: "The health status of this service"
+                    example: "UP"
+                    type: "string"
+                  message:
+                    description: "A human-readable message describing the health status"
+                    example: "Customers service operational"
+                    type: "string"
+  /customers:
+    x-amf-displayName: "Customers"
+    description: "Operations related to customer management"
+    get:
+      operationId: "List customers"
+      description: "Returns a paginated list of customers"
+      parameters:
+      - name: "page"
+        description: "Page number for pagination"
+        required: false
+        in: "query"
+        schema:
+          description: "Page number for pagination"
+          default: 1
+          example: 1
+          type: "integer"
+      - name: "limit"
+        description: "Number of customers per page"
+        required: false
+        in: "query"
+        schema:
+          description: "Number of customers per page"
+          default: 20
+          example: 20
+          type: "integer"
+      requestBody:
+        content: {}
+      responses:
+        200:
+          description: "Successfully retrieved customers list"
+          content:
+            application/json:
+              schema:
+                x-amf-examples:
+                  multiple_customers:
+                  - customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@email.com"
+                    phone: "+1-555-123-4567"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                  - customer_id: "cust-987fcdeb-51a2-43e7-89bc-765432198765"
+                    first_name: "Jane"
+                    last_name: "Doe"
+                    email: "jane.doe@email.com"
+                    phone: "+1-555-987-6543"
+                    date_of_birth: "1990-07-22"
+                    status: "active"
+                    created_date: "2024-01-16T14:15:00Z"
+                type: "array"
+                items:
+                  description: "Represents a bank customer with their profile information"
+                  x-amf-examples:
+                    example_0:
+                      customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                      first_name: "John"
+                      last_name: "Smith"
+                      email: "john.smith@email.com"
+                      phone: "+1-555-123-4567"
+                      date_of_birth: "1985-03-15"
+                      status: "active"
+                      created_date: "2024-01-15T10:30:00Z"
+                    created_customer:
+                      customer_id: "cust-456e7890-e12b-34d5-a678-901234567890"
+                      first_name: "Alice"
+                      last_name: "Johnson"
+                      email: "alice.johnson@email.com"
+                      phone: "+1-555-111-2222"
+                      date_of_birth: "1988-11-30"
+                      status: "active"
+                      created_date: "2024-01-17T16:45:00Z"
+                    customer_details:
+                      customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                      first_name: "John"
+                      last_name: "Smith"
+                      email: "john.smith@email.com"
+                      phone: "+1-555-123-4567"
+                      date_of_birth: "1985-03-15"
+                      status: "active"
+                      created_date: "2024-01-15T10:30:00Z"
+                    updated_customer:
+                      customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                      first_name: "John"
+                      last_name: "Smith"
+                      email: "john.smith@newemail.com"
+                      phone: "+1-555-999-7777"
+                      date_of_birth: "1985-03-15"
+                      status: "active"
+                      created_date: "2024-01-15T10:30:00Z"
+                  type: "object"
+                  additionalProperties: true
+                  required:
+                  - "customer_id"
+                  - "first_name"
+                  - "last_name"
+                  - "email"
+                  - "phone"
+                  - "date_of_birth"
+                  - "status"
+                  - "created_date"
+                  properties:
+                    customer_id:
+                      description: "Unique identifier for the customer (UUID v4)"
+                      example: "cust-123e4567-e89b-12d3-a456-426614174000"
+                      type: "string"
+                    first_name:
+                      description: "Customer's first name"
+                      example: "John"
+                      type: "string"
+                    last_name:
+                      description: "Customer's last name"
+                      example: "Smith"
+                      type: "string"
+                    email:
+                      description: "Customer's email address"
+                      example: "john.smith@email.com"
+                      type: "string"
+                    phone:
+                      description: "Customer's phone number"
+                      example: "+1-555-123-4567"
+                      type: "string"
+                    date_of_birth:
+                      description: "Customer's date of birth"
+                      example: "1985-03-15"
+                      type: "string"
+                      format: "date"
+                    status:
+                      description: "Current status of the customer account"
+                      enum:
+                      - "active"
+                      - "inactive"
+                      - "suspended"
+                      example: "active"
+                      type: "string"
+                    created_date:
+                      description: "When the customer account was created"
+                      example: "2024-01-15T10:30:00Z"
+                      type: "string"
+                      format: "date-time"
+        500:
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+    post:
+      operationId: "Create customer"
+      description: "Creates a new customer profile"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: "Customer information for new profile"
+              x-amf-examples:
+                new_customer:
+                  first_name: "Alice"
+                  last_name: "Johnson"
+                  email: "alice.johnson@email.com"
+                  phone: "+1-555-111-2222"
+                  date_of_birth: "1988-11-30"
+              type: "object"
+              additionalProperties: true
+              required:
+              - "date_of_birth"
+              - "last_name"
+              - "email"
+              - "phone"
+              - "first_name"
+              properties:
+                date_of_birth:
+                  description: "Customer's date of birth"
+                  example: "1990-07-22"
+                  type: "string"
+                  format: "date"
+                last_name:
+                  description: "Customer's last name"
+                  example: "Doe"
+                  type: "string"
+                email:
+                  description: "Customer's email address"
+                  example: "jane.doe@email.com"
+                  type: "string"
+                phone:
+                  description: "Customer's phone number"
+                  example: "+1-555-987-6543"
+                  type: "string"
+                first_name:
+                  description: "Customer's first name"
+                  example: "Jane"
+                  type: "string"
+      responses:
+        201:
+          description: "Customer created successfully"
+          content:
+            application/json:
+              schema:
+                description: "Represents a bank customer with their profile information"
+                x-amf-examples:
+                  example_0:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@email.com"
+                    phone: "+1-555-123-4567"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                  created_customer:
+                    customer_id: "cust-456e7890-e12b-34d5-a678-901234567890"
+                    first_name: "Alice"
+                    last_name: "Johnson"
+                    email: "alice.johnson@email.com"
+                    phone: "+1-555-111-2222"
+                    date_of_birth: "1988-11-30"
+                    status: "active"
+                    created_date: "2024-01-17T16:45:00Z"
+                  customer_details:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@email.com"
+                    phone: "+1-555-123-4567"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                  updated_customer:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@newemail.com"
+                    phone: "+1-555-999-7777"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "customer_id"
+                - "first_name"
+                - "last_name"
+                - "email"
+                - "phone"
+                - "date_of_birth"
+                - "status"
+                - "created_date"
+                properties:
+                  customer_id:
+                    description: "Unique identifier for the customer (UUID v4)"
+                    example: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    type: "string"
+                  first_name:
+                    description: "Customer's first name"
+                    example: "John"
+                    type: "string"
+                  last_name:
+                    description: "Customer's last name"
+                    example: "Smith"
+                    type: "string"
+                  email:
+                    description: "Customer's email address"
+                    example: "john.smith@email.com"
+                    type: "string"
+                  phone:
+                    description: "Customer's phone number"
+                    example: "+1-555-123-4567"
+                    type: "string"
+                  date_of_birth:
+                    description: "Customer's date of birth"
+                    example: "1985-03-15"
+                    type: "string"
+                    format: "date"
+                  status:
+                    description: "Current status of the customer account"
+                    enum:
+                    - "active"
+                    - "inactive"
+                    - "suspended"
+                    example: "active"
+                    type: "string"
+                  created_date:
+                    description: "When the customer account was created"
+                    example: "2024-01-15T10:30:00Z"
+                    type: "string"
+                    format: "date-time"
+        400:
+          description: "Invalid customer data"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+        409:
+          description: "Customer already exists"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+        500:
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+  /customers/{customerId}:
+    x-amf-displayName: "Customer by ID"
+    parameters:
+    - name: "customerId"
+      description: "The UUID of the customer"
+      required: true
+      in: "path"
+      schema:
+        description: "The UUID of the customer"
+        example: "cust-123e4567-e89b-12d3-a456-426614174000"
+        type: "string"
+    get:
+      operationId: "Get customer details"
+      description: "Returns detailed information for a specific customer"
+      responses:
+        200:
+          description: "Customer details retrieved successfully"
+          content:
+            application/json:
+              schema:
+                description: "Represents a bank customer with their profile information"
+                x-amf-examples:
+                  example_0:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@email.com"
+                    phone: "+1-555-123-4567"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                  created_customer:
+                    customer_id: "cust-456e7890-e12b-34d5-a678-901234567890"
+                    first_name: "Alice"
+                    last_name: "Johnson"
+                    email: "alice.johnson@email.com"
+                    phone: "+1-555-111-2222"
+                    date_of_birth: "1988-11-30"
+                    status: "active"
+                    created_date: "2024-01-17T16:45:00Z"
+                  customer_details:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@email.com"
+                    phone: "+1-555-123-4567"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                  updated_customer:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@newemail.com"
+                    phone: "+1-555-999-7777"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "customer_id"
+                - "first_name"
+                - "last_name"
+                - "email"
+                - "phone"
+                - "date_of_birth"
+                - "status"
+                - "created_date"
+                properties:
+                  customer_id:
+                    description: "Unique identifier for the customer (UUID v4)"
+                    example: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    type: "string"
+                  first_name:
+                    description: "Customer's first name"
+                    example: "John"
+                    type: "string"
+                  last_name:
+                    description: "Customer's last name"
+                    example: "Smith"
+                    type: "string"
+                  email:
+                    description: "Customer's email address"
+                    example: "john.smith@email.com"
+                    type: "string"
+                  phone:
+                    description: "Customer's phone number"
+                    example: "+1-555-123-4567"
+                    type: "string"
+                  date_of_birth:
+                    description: "Customer's date of birth"
+                    example: "1985-03-15"
+                    type: "string"
+                    format: "date"
+                  status:
+                    description: "Current status of the customer account"
+                    enum:
+                    - "active"
+                    - "inactive"
+                    - "suspended"
+                    example: "active"
+                    type: "string"
+                  created_date:
+                    description: "When the customer account was created"
+                    example: "2024-01-15T10:30:00Z"
+                    type: "string"
+                    format: "date-time"
+        404:
+          description: "Customer not found"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+        500:
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+    put:
+      operationId: "Update customer"
+      description: "Updates customer information"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: "Updated customer information"
+              x-amf-examples:
+                update_contact:
+                  email: "john.smith@newemail.com"
+                  phone: "+1-555-999-7777"
+              type: "object"
+              additionalProperties: true
+              properties:
+                last_name:
+                  description: "Customer's last name"
+                  example: "Doe"
+                  type: "string"
+                email:
+                  description: "Customer's email address"
+                  example: "jane.doe@newemail.com"
+                  type: "string"
+                phone:
+                  description: "Customer's phone number"
+                  example: "+1-555-999-8888"
+                  type: "string"
+                first_name:
+                  description: "Customer's first name"
+                  example: "Jane"
+                  type: "string"
+      responses:
+        200:
+          description: "Customer updated successfully"
+          content:
+            application/json:
+              schema:
+                description: "Represents a bank customer with their profile information"
+                x-amf-examples:
+                  example_0:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@email.com"
+                    phone: "+1-555-123-4567"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                  created_customer:
+                    customer_id: "cust-456e7890-e12b-34d5-a678-901234567890"
+                    first_name: "Alice"
+                    last_name: "Johnson"
+                    email: "alice.johnson@email.com"
+                    phone: "+1-555-111-2222"
+                    date_of_birth: "1988-11-30"
+                    status: "active"
+                    created_date: "2024-01-17T16:45:00Z"
+                  customer_details:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@email.com"
+                    phone: "+1-555-123-4567"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                  updated_customer:
+                    customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    first_name: "John"
+                    last_name: "Smith"
+                    email: "john.smith@newemail.com"
+                    phone: "+1-555-999-7777"
+                    date_of_birth: "1985-03-15"
+                    status: "active"
+                    created_date: "2024-01-15T10:30:00Z"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "customer_id"
+                - "first_name"
+                - "last_name"
+                - "email"
+                - "phone"
+                - "date_of_birth"
+                - "status"
+                - "created_date"
+                properties:
+                  customer_id:
+                    description: "Unique identifier for the customer (UUID v4)"
+                    example: "cust-123e4567-e89b-12d3-a456-426614174000"
+                    type: "string"
+                  first_name:
+                    description: "Customer's first name"
+                    example: "John"
+                    type: "string"
+                  last_name:
+                    description: "Customer's last name"
+                    example: "Smith"
+                    type: "string"
+                  email:
+                    description: "Customer's email address"
+                    example: "john.smith@email.com"
+                    type: "string"
+                  phone:
+                    description: "Customer's phone number"
+                    example: "+1-555-123-4567"
+                    type: "string"
+                  date_of_birth:
+                    description: "Customer's date of birth"
+                    example: "1985-03-15"
+                    type: "string"
+                    format: "date"
+                  status:
+                    description: "Current status of the customer account"
+                    enum:
+                    - "active"
+                    - "inactive"
+                    - "suspended"
+                    example: "active"
+                    type: "string"
+                  created_date:
+                    description: "When the customer account was created"
+                    example: "2024-01-15T10:30:00Z"
+                    type: "string"
+                    format: "date-time"
+        400:
+          description: "Invalid update data"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+        404:
+          description: "Customer not found"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+        500:
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                description: "Standard error response structure for all error cases"
+                x-amf-examples:
+                  example_0:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found"
+                  internal_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customers"
+                  validation_error:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid email format"
+                  duplicate_customer:
+                    error_code: "CONFLICT"
+                    message: "Customer with this email already exists"
+                  creation_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to create customer"
+                  not_found:
+                    error_code: "NOT_FOUND"
+                    message: "Customer cust-123e4567-e89b-12d3-a456-426614174000 not\
+                      \ found"
+                  server_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to retrieve customer details"
+                  example_1:
+                    error_code: "BAD_REQUEST"
+                    message: "Invalid phone number format"
+                  example_2:
+                    error_code: "NOT_FOUND"
+                    message: "Customer not found for update"
+                  update_error:
+                    error_code: "INTERNAL_ERROR"
+                    message: "Failed to update customer"
+                type: "object"
+                additionalProperties: true
+                required:
+                - "error_code"
+                - "message"
+                properties:
+                  error_code:
+                    description: "A standardized error code identifying the type of\
+                      \ error"
+                    enum:
+                    - "INTERNAL_ERROR"
+                    - "NOT_FOUND"
+                    - "BAD_REQUEST"
+                    - "CONFLICT"
+                    example: "NOT_FOUND"
+                    type: "string"
+                  message:
+                    description: "A human-readable description of the error"
+                    example: "Customer not found"
+                    type: "string"
+components:
+  schemas:
+    CreateCustomerRequest:
+      description: "Request payload for creating a new customer"
+      example:
+        first_name: "Jane"
+        last_name: "Doe"
+        email: "jane.doe@email.com"
+        phone: "+1-555-987-6543"
+        date_of_birth: "1990-07-22"
+      type: "object"
+      additionalProperties: true
+      required:
+      - "first_name"
+      - "last_name"
+      - "email"
+      - "phone"
+      - "date_of_birth"
+      properties:
+        first_name:
+          description: "Customer's first name"
+          example: "Jane"
+          type: "string"
+        last_name:
+          description: "Customer's last name"
+          example: "Doe"
+          type: "string"
+        email:
+          description: "Customer's email address"
+          example: "jane.doe@email.com"
+          type: "string"
+        phone:
+          description: "Customer's phone number"
+          example: "+1-555-987-6543"
+          type: "string"
+        date_of_birth:
+          description: "Customer's date of birth"
+          example: "1990-07-22"
+          type: "string"
+          format: "date"
+    HealthResponse:
+      description: "Response indicating the health status of the service"
+      x-amf-examples:
+        example_0:
+          status: "UP"
+          message: "Customers service operational"
+      type: "object"
+      additionalProperties: true
+      required:
+      - "status"
+      - "message"
+      properties:
+        status:
+          description: "The health status of this service"
+          example: "UP"
+          type: "string"
+        message:
+          description: "A human-readable message describing the health status"
+          example: "Customers service operational"
+          type: "string"
+    UpdateCustomerRequest:
+      description: "Request payload for updating customer information"
+      example:
+        email: "jane.doe@newemail.com"
+        phone: "+1-555-999-8888"
+      type: "object"
+      additionalProperties: true
+      properties:
+        first_name:
+          description: "Customer's first name"
+          example: "Jane"
+          type: "string"
+        last_name:
+          description: "Customer's last name"
+          example: "Doe"
+          type: "string"
+        email:
+          description: "Customer's email address"
+          example: "jane.doe@newemail.com"
+          type: "string"
+        phone:
+          description: "Customer's phone number"
+          example: "+1-555-999-8888"
+          type: "string"
+    ErrorResponse:
+      description: "Standard error response structure for all error cases"
+      x-amf-examples:
+        example_0:
+          error_code: "NOT_FOUND"
+          message: "Customer not found"
+      type: "object"
+      additionalProperties: true
+      required:
+      - "error_code"
+      - "message"
+      properties:
+        error_code:
+          description: "A standardized error code identifying the type of error"
+          enum:
+          - "INTERNAL_ERROR"
+          - "NOT_FOUND"
+          - "BAD_REQUEST"
+          - "CONFLICT"
+          example: "NOT_FOUND"
+          type: "string"
+        message:
+          description: "A human-readable description of the error"
+          example: "Customer not found"
+          type: "string"
+    Customer:
+      description: "Represents a bank customer with their profile information"
+      x-amf-examples:
+        example_0:
+          customer_id: "cust-123e4567-e89b-12d3-a456-426614174000"
+          first_name: "John"
+          last_name: "Smith"
+          email: "john.smith@email.com"
+          phone: "+1-555-123-4567"
+          date_of_birth: "1985-03-15"
+          status: "active"
+          created_date: "2024-01-15T10:30:00Z"
+      type: "object"
+      additionalProperties: true
+      required:
+      - "customer_id"
+      - "first_name"
+      - "last_name"
+      - "email"
+      - "phone"
+      - "date_of_birth"
+      - "status"
+      - "created_date"
+      properties:
+        customer_id:
+          description: "Unique identifier for the customer (UUID v4)"
+          example: "cust-123e4567-e89b-12d3-a456-426614174000"
+          type: "string"
+        first_name:
+          description: "Customer's first name"
+          example: "John"
+          type: "string"
+        last_name:
+          description: "Customer's last name"
+          example: "Smith"
+          type: "string"
+        email:
+          description: "Customer's email address"
+          example: "john.smith@email.com"
+          type: "string"
+        phone:
+          description: "Customer's phone number"
+          example: "+1-555-123-4567"
+          type: "string"
+        date_of_birth:
+          description: "Customer's date of birth"
+          example: "1985-03-15"
+          type: "string"
+          format: "date"
+        status:
+          description: "Current status of the customer account"
+          enum:
+          - "active"
+          - "inactive"
+          - "suspended"
+          example: "active"
+          type: "string"
+        created_date:
+          description: "When the customer account was created"
+          example: "2024-01-15T10:30:00Z"
+          type: "string"
+          format: "date-time"
+  x-amf-annotationTypes:
+    contact:
+      schema:
+        type: "object"
+        additionalProperties: true
+        required:
+        - "email"
+        properties:
+          email:
+            type: "string"
